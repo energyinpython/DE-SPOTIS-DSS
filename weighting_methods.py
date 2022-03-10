@@ -2,7 +2,6 @@ import numpy as np
 from correlations import *
 from normalizations import *
 import copy
-import pandas as pd
 import sys
 
 
@@ -57,7 +56,7 @@ def critic_weighting(X):
     return w
 
 
-# gini weighting
+# gini coefficient-based weighting
 def gini_weighting(X):
         m, n = np.shape(X)
         G = np.zeros(n)
@@ -138,30 +137,3 @@ def idocriw_weighting(X, types):
     w = cilos_weighting(X, types)
     weights = (q * w) / np.sum(q * w)
     return weights
-
-
-# SWARA weighting subjective
-def swara_weighting(s):
-    k = np.ones(len(s))
-    q = np.ones(len(s))
-    for j in range(1, len(s)):
-        k[j] = s[j] + 1
-        q[j] = q[j - 1] / k[j]
-
-    return q / np.sum(q)
-
-
-def main():
-    data = pd.read_csv('num_example_idocriw.csv', index_col = 'Ai')
-    df_data = data.iloc[:len(data) - 1, :]
-    # types
-    types = data.iloc[len(data) - 1, :].to_numpy()
-    # matrix
-    matrix = df_data.to_numpy()
-
-    weights = idocriw_weighting(matrix, types)
-    print(weights)
-
-
-if __name__ == '__main__':
-    main()

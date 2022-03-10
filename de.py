@@ -35,14 +35,14 @@ class DE_algorithm():
 
     def _generate_population(self, X_train, y_train, types, bounds):
 
-        # Initialization
+        # Initialize population
         class Empty_individual:
             Position = None
             Fitness = None
 
         class Best_sol:
             Position = None
-            Fitness = -(np.inf) # maximalization
+            Fitness = -(np.inf) # goal-maximizing function
 
         # Generate population
         BestSol = Best_sol()
@@ -54,11 +54,11 @@ class DE_algorithm():
         for i in range(self.nPop):
             pop[i].Position = np.random.uniform(self.varMin, self.varMax, self.varSize)
             
-            # pop[i].Position -> to WAGI
+            # pop[i].Position represent weights vector
             pop[i].Position = pop[i].Position / np.sum(pop[i].Position)
             pop[i].Fitness = self._FitnessFunction(X_train, pop[i].Position, types, bounds, y_train)
             
-            if (pop[i].Fitness >= BestSol.Fitness): # maximalization
+            if (pop[i].Fitness >= BestSol.Fitness): # goal-maximizing function
                 BestSol = copy.deepcopy(pop[i])
 
         return pop, BestSol, NewSol
@@ -87,7 +87,9 @@ class DE_algorithm():
                 
                 # Mutation
                 beta = np.random.uniform(self.beta_min, self.beta_max, self.varSize)
+                # DE/rand/1 strategy
                 # v = pop[a].Position+beta*(pop[b].Position-pop[c].Position)
+                # DE/best/1/ strategy
                 v = BestSol.Position+beta*(pop[a].Position-pop[b].Position)
                 v[v < self.varMin] = self.varMin
                 v[v > self.varMax] = self.varMax
@@ -102,16 +104,16 @@ class DE_algorithm():
                         u[j] = copy.deepcopy(x[j])
                 
                 NewSol.Position = copy.deepcopy(u)
-                # NewSol.Position -> weights
+                # NewSol.Position represents weights vector
                 NewSol.Position = NewSol.Position / np.sum(NewSol.Position)
                 NewSol.Fitness = self._FitnessFunction(X_train, NewSol.Position, types, bounds, y_train)
                 mean_fitness_sum += NewSol.Fitness
 
                 # Selection
-                if NewSol.Fitness >= pop[i].Fitness: # maximalization
+                if NewSol.Fitness >= pop[i].Fitness: # goal-maximizing function
                     pop[i] = copy.deepcopy(NewSol)
                     
-                    if pop[i].Fitness >= BestSol.Fitness: # maximalization
+                    if pop[i].Fitness >= BestSol.Fitness: # goal-maximizing function
                         BestSol = copy.deepcopy(pop[i])
 
             # Update Best Fitness Individual

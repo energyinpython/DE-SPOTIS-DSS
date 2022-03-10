@@ -1,8 +1,6 @@
 import numpy as np
 import pandas as pd
 import copy
-import matplotlib.pyplot as plt
-import seaborn as sns
 
 from rank_preferences import *
 from correlations import *
@@ -12,7 +10,6 @@ from de import DE_algorithm
 from visualization import *
 
 from sklearn.model_selection import train_test_split
-from scipy.stats import pearsonr, spearmanr
 
 
 def main():
@@ -73,15 +70,11 @@ def main():
     weights.to_csv('output/best_weights_de.csv')
 
     print('Weights correlation: ', pearson_coeff(train_weights, BestPosition))
-    s, _ = pearsonr(train_weights, BestPosition)
-    print('Check: ', s)
 
     spotis = SPOTIS()
     pref = spotis(X_test, BestPosition, types, bounds)
     rank = rank_preferences(pref, reverse = False)
     print('Consistency: ', spearman(rank, y_test))
-    s, _ = spearmanr(rank, y_test)
-    print('Check: ', s)
 
     results = pd.DataFrame(index = X_test_df.index)
     results['Real rank'] = y_test
