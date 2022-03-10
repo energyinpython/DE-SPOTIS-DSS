@@ -64,7 +64,7 @@ def main():
 
     # Results
     weights = pd.DataFrame(index = cols)
-    weights['Entropy weights'] = train_weights
+    weights['Real weights'] = train_weights
     weights['DE weights'] = BestPosition
     weights = weights.rename_axis('Cj')
     weights.to_csv('output/best_weights_de.csv')
@@ -74,7 +74,7 @@ def main():
     spotis = SPOTIS()
     pref = spotis(X_test, BestPosition, types, bounds)
     rank = rank_preferences(pref, reverse = False)
-    print('Consistency: ', spearman(rank, y_test))
+    print('Rankings consistency: ', spearman(rank, y_test))
 
     results = pd.DataFrame(index = X_test_df.index)
     results['Real rank'] = y_test

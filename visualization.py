@@ -68,7 +68,7 @@ def plot_weights(weights):
     list_rank = np.arange(1, len(weights) + 1, step)
     
     fig, ax = plt.subplots(figsize = (10, 5))
-    ax.scatter(x = list_rank, y = weights['Entropy weights'].to_numpy(), label = 'Entropy weights')
+    ax.scatter(x = list_rank, y = weights['Real weights'].to_numpy(), label = 'Real weights')
     ax.scatter(x = list_rank, y = weights['DE weights'].to_numpy(), label = 'DE weights')
     
     ax.set_xlabel('Criteria', fontsize = 12)
