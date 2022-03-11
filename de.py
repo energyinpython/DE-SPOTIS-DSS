@@ -21,12 +21,13 @@ class DE_algorithm():
         self.pCR = 0.4
 
 
-    def __call__(self, pd_weights, X_train, y_train, types, bounds):
+    def __call__(self, pd_weights, X_train, y_train, types, bounds, verbose = True):
         self.varSize = np.shape(X_train)[1]
+        self.verbose = verbose
         return DE_algorithm._de_algorithm(self, pd_weights, X_train, y_train, types, bounds)
 
 
-    def _FitnessFunction(self, matrix, weights, types, bounds, rank_ref):
+    def _fitnessFunction(self, matrix, weights, types, bounds, rank_ref):
         spotis = SPOTIS()
         pref = spotis(matrix, weights, types, bounds)
         rank = rank_preferences(pref, reverse = False)
@@ -56,7 +57,7 @@ class DE_algorithm():
             
             # pop[i].Position represent weights vector
             pop[i].Position = pop[i].Position / np.sum(pop[i].Position)
-            pop[i].Fitness = self._FitnessFunction(X_train, pop[i].Position, types, bounds, y_train)
+            pop[i].Fitness = self._fitnessFunction(X_train, pop[i].Position, types, bounds, y_train)
             
             if (pop[i].Fitness >= BestSol.Fitness): # goal-maximizing function
                 BestSol = copy.deepcopy(pop[i])
@@ -64,6 +65,7 @@ class DE_algorithm():
         return pop, BestSol, NewSol
 
 
+    @staticmethod
     def _de_algorithm(self, pd_weights, X_train, y_train, types, bounds):
         cols = ['C' + str(y) for y in range(1, X_train.shape[1] + 1)]
         pd_weights = pd.DataFrame(index = cols)
@@ -106,7 +108,7 @@ class DE_algorithm():
                 NewSol.Position = copy.deepcopy(u)
                 # NewSol.Position represents weights vector
                 NewSol.Position = NewSol.Position / np.sum(NewSol.Position)
-                NewSol.Fitness = self._FitnessFunction(X_train, NewSol.Position, types, bounds, y_train)
+                NewSol.Fitness = self._fitnessFunction(X_train, NewSol.Position, types, bounds, y_train)
                 mean_fitness_sum += NewSol.Fitness
 
                 # Selection
@@ -123,7 +125,8 @@ class DE_algorithm():
             MeanFitness[it] = mean_fitness_sum / self.nPop
             
             # Show Iteration Information
-            print('Iteration: ', it, ': Best Fitness = ', BestFitness[it])
+            if self.verbose == True:
+                print('Iteration: ', it, ': Best Fitness = ', BestFitness[it])
             pd_weights[str(it)] = BestPosition
 
         return pd_weights, BestPosition, BestFitness, MeanFitness

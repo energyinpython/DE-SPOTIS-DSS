@@ -9,53 +9,32 @@ from spotis import SPOTIS
 from de import DE_algorithm
 from visualization import *
 
-from sklearn.model_selection import train_test_split
-
 
 def main():
-
     # load dataset
-    
     filename = 'input/mobile_phones2000.csv'
-
     data = pd.read_csv(filename)
     types = data.iloc[len(data) - 1, :].to_numpy()
     df_data = data.iloc[:200, :]
-    matrix = df_data.to_numpy()
+    whole_matrix = df_data.to_numpy()
 
     # determine bounds of alternatives performances for SPOTIS
-    bounds_min = np.amin(matrix, axis = 0)
-    bounds_max = np.amax(matrix, axis = 0)
+    bounds_min = np.amin(whole_matrix, axis = 0)
+    bounds_max = np.amax(whole_matrix, axis = 0)
     bounds = np.vstack((bounds_min, bounds_max))
 
-    # split dataset on training and test dataset
-    X_train_df, X_test_df = train_test_split(df_data, test_size=0.2, random_state=5)
-    X_train_df = copy.deepcopy(X_train_df)
-    X_test_df = copy.deepcopy(X_test_df)
+    # load train and test datasets
+    train_df = pd.read_csv('input/train.csv', index_col = 'Ai')
+    X_train = train_df.iloc[:len(train_df) - 1, :-1].to_numpy()
+    y_train = train_df.iloc[:len(train_df) - 1, -1].to_numpy()
 
-    # new alternatives symbols
-    list_alt_names_train = [r'$A_{' + str(i) + '}$' for i in range(1, len(X_train_df) + 1)]
-    list_alt_names_test = [r'$A_{' + str(i) + '}$' for i in range(1, len(X_test_df) + 1)]
-
-    X_train_df['Ai'] = list_alt_names_train
-    X_test_df['Ai'] = list_alt_names_test
-
-    X_train_df = X_train_df.set_index('Ai')
-    X_test_df = X_test_df.set_index('Ai')
-
-    X_train = X_train_df.to_numpy()
-    X_test = X_test_df.to_numpy()
+    test_df = pd.read_csv('input/test.csv', index_col = 'Ai')
+    X_test = test_df.iloc[:len(test_df) - 1, :-1].to_numpy()
+    y_test = test_df.iloc[:len(test_df) - 1, -1].to_numpy()
 
     # real weights
     train_weights = entropy_weighting(X_train)
-    spotis = SPOTIS()
-    pref_train = spotis(X_train, train_weights, types, bounds)
-    y_train = rank_preferences(pref_train, reverse = False)
-
-    pref_test = spotis(X_test, train_weights, types, bounds)
-    y_test = rank_preferences(pref_test, reverse = False)
-
-    cols = [r'$C_{' + str(y) + '}$' for y in range(1, X_train.shape[1] + 1)]
+    cols = [r'$C_{' + str(y) + '}$' for y in range(1, data.shape[1] + 1)]
     pd_weights = pd.DataFrame(index = cols)
 
     # DE algorithm
@@ -63,6 +42,7 @@ def main():
     pd_weights, BestPosition, BestFitness, MeanFitness = de_algorithm(pd_weights, X_train, y_train, types, bounds)
 
     # Results
+    # Weights
     weights = pd.DataFrame(index = cols)
     weights['Real weights'] = train_weights
     weights['DE weights'] = BestPosition
@@ -70,17 +50,9 @@ def main():
     weights.to_csv('output/best_weights_de.csv')
 
     print('Weights correlation: ', pearson_coeff(train_weights, BestPosition))
+    plot_weights(weights)
 
-    spotis = SPOTIS()
-    pref = spotis(X_test, BestPosition, types, bounds)
-    rank = rank_preferences(pref, reverse = False)
-    print('Rankings consistency: ', spearman(rank, y_test))
-
-    results = pd.DataFrame(index = X_test_df.index)
-    results['Real rank'] = y_test
-    results['DE rank'] = rank
-    results.to_csv('output/results_de.csv')
-
+    # Fitness
     fitness_best = pd.DataFrame()
     fitness_best['Best fitness value'] = BestFitness
     fitness_best.to_csv('output/best_fitness.csv')
@@ -88,11 +60,21 @@ def main():
     fitness_mean = pd.DataFrame()
     fitness_mean['Mean fitness value'] = MeanFitness
     fitness_mean.to_csv('output/mean_fitness.csv')
-
-    # Results visualization
     plot_fitness(BestFitness, MeanFitness)
+
+    # Ranking
+    spotis = SPOTIS()
+    pref = spotis(X_test, BestPosition, types, bounds)
+    y_pred = rank_preferences(pref, reverse = False)
+    print('Rankings consistency: ', spearman(y_test, y_pred))
+
+    results = pd.DataFrame(index = test_df.index[:-1])
+    results['Real rank'] = y_test
+    results['DE rank'] = y_pred
+    results.to_csv('output/results_de.csv')
+    
     plot_rankings(results)
-    plot_weights(weights)
+    
     
 
 if __name__ == '__main__':

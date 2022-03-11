@@ -3,6 +3,7 @@ import seaborn as sns
 import numpy as np
 
 def plot_scatter(data, model_compare):
+    sns.set_style("darkgrid")
     list_rank = np.arange(1, len(data) + 2, 4)
     list_alt_names = data.index
     for it, el in enumerate(model_compare):
@@ -64,6 +65,7 @@ def plot_rankings(results):
 
 
 def plot_weights(weights):
+    sns.set_style("darkgrid")
     step = 1
     list_rank = np.arange(1, len(weights) + 1, step)
     
