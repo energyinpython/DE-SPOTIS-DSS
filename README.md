@@ -1,5 +1,5 @@
 # DE-SPOTIS-DSS
-Visualization of weight changes generated in successive iterations of DE algorithm in relation to real weights.
+Visualization of criteria weights changes generated in successive iterations of DE algorithm in relation to real weights.
 
 <img src="https://github.com/energyinpython/DE-SPOTIS-DSS/blob/main/animations/weights_gif.gif" width="800" height="400">
 
