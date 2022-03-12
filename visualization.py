@@ -64,6 +64,7 @@ def plot_rankings(results):
     plot_scatter(data = results, model_compare = model_compare)
 
 
+
 def plot_weights(weights):
     sns.set_style("darkgrid")
     step = 1

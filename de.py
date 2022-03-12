@@ -9,6 +9,8 @@ from correlations import *
 from weighting_methods import *
 from spotis import SPOTIS
 
+from visualization import *
+
 
 class DE_algorithm():
     def __init__(self):
@@ -67,8 +69,6 @@ class DE_algorithm():
 
     @staticmethod
     def _de_algorithm(self, pd_weights, X_train, y_train, types, bounds):
-        cols = ['C' + str(y) for y in range(1, X_train.shape[1] + 1)]
-        pd_weights = pd.DataFrame(index = cols)
 
         pop, BestSol, NewSol = self._generate_population(X_train, y_train, types, bounds)
         
@@ -83,16 +83,16 @@ class DE_algorithm():
                 v_pop = np.delete(v_pop, i)
                 A = random.sample(list(v_pop), 3)
                 
-                a = A[0]
-                b = A[1]
-                c = A[2]
+                # a = A[0]
+                # b = A[1]
+                # c = A[2]
                 
                 # Mutation
                 beta = np.random.uniform(self.beta_min, self.beta_max, self.varSize)
                 # DE/rand/1 strategy
                 # v = pop[a].Position+beta*(pop[b].Position-pop[c].Position)
                 # DE/best/1/ strategy
-                v = BestSol.Position+beta*(pop[a].Position-pop[b].Position)
+                v = BestSol.Position+beta*(pop[A[0]].Position-pop[A[1]].Position)
                 v[v < self.varMin] = self.varMin
                 v[v > self.varMax] = self.varMax
 
