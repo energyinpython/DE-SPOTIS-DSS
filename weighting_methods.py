@@ -128,7 +128,7 @@ def cilos_weighting(X, types):
     AA = np.zeros(F.shape[0])
     AA[0] = sys.float_info.epsilon
     q = np.linalg.inv(F).dot(AA)
-    return q
+    return q / np.sum(q)
 
 
 # IDOCRIW weighting

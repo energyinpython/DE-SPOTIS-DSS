@@ -70,7 +70,7 @@ def main():
 
     results = pd.DataFrame(index = test_df.index[:-1])
     results['Real rank'] = y_test
-    results['DE rank'] = y_pred
+    results['Predicted rank'] = y_pred
     results.to_csv('output/results_de.csv')
     
     plot_rankings(results)
