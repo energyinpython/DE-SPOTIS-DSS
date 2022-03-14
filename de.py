@@ -116,6 +116,12 @@ class DE_algorithm():
 
         return pop, BestSol, NewSol
 
+    def _crossover(self, u, v, aj):
+        u[aj] = v[aj]
+        R = np.random.rand(len(u))
+        u[R <= self.pCR] = v[R <= self.pCR]
+        return u
+
 
     @staticmethod
     def _de_algorithm(self, X_train, y_train, types, bounds):
@@ -145,14 +151,10 @@ class DE_algorithm():
                 v[v > self.varMax] = self.varMax
 
                 # Crossover
-                u = np.zeros(self.varSize)
+                u = copy.deepcopy(x)
                 aj = np.random.randint(0, self.varSize)
-                for j in range(self.varSize):
-                    if j == aj or np.random.rand() <= self.pCR:
-                        u[j] = copy.deepcopy(v[j])
-                    else:
-                        u[j] = copy.deepcopy(x[j])
-                
+                u = self._crossover(u, v, aj)
+
                 NewSol.Position = copy.deepcopy(u)
                 # NewSol.Position represents weights vector
                 NewSol.Position = NewSol.Position / np.sum(NewSol.Position)

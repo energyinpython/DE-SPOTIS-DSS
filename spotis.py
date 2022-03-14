@@ -10,7 +10,7 @@ class SPOTIS(MCDM_method):
 
     def __call__(self, matrix, weights, types, bounds):
         """
-        Score alternatives provided in matrix using criteria `weights` and criteria `types`.
+        Score alternatives provided in decision matrix `matrix` using criteria `weights` and criteria `types`.
 
         Parameters
         ----------
