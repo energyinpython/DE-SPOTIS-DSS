@@ -2,8 +2,22 @@ import numpy as np
 from correlations import *
 from normalizations import *
 
+
 # entropy weighting
 def entropy_weighting(X):
+    """
+    Calculate criteria weights using objective Entropy weighting method
+
+    Parameters
+    ----------
+        X : ndarray
+            Decision matrix with performance values of m alternatives and n criteria
+
+    Returns
+    -------
+        ndarray
+            vector of criteria weights
+    """
     # normalization for profit criteria
     criteria_type = np.ones(np.shape(X)[1])
     pij = sum_normalization(X, criteria_type)

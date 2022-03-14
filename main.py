@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-import copy
 
 from rank_preferences import *
 from correlations import *
@@ -35,11 +34,10 @@ def main():
     # real weights
     train_weights = entropy_weighting(X_train)
     cols = [r'$C_{' + str(y) + '}$' for y in range(1, data.shape[1] + 1)]
-    pd_weights = pd.DataFrame(index = cols)
 
     # DE algorithm
     de_algorithm = DE_algorithm()
-    pd_weights, BestPosition, BestFitness, MeanFitness = de_algorithm(pd_weights, X_train, y_train, types, bounds)
+    BestPosition, BestFitness, MeanFitness = de_algorithm(X_train, y_train, types, bounds)
 
     # Results
     # Weights

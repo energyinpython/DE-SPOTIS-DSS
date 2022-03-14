@@ -3,6 +3,14 @@ import seaborn as sns
 import numpy as np
 
 def plot_scatter(data, model_compare):
+    """
+    Display scatter plot comparing real and predicted ranking.
+
+    Parameters
+    ----------
+        data: dataframe
+        model_compare : list[list]
+    """
     sns.set_style("darkgrid")
     list_rank = np.arange(1, len(data) + 2, 4)
     list_alt_names = data.index
@@ -40,6 +48,16 @@ def plot_scatter(data, model_compare):
 
 
 def plot_fitness(BestFitness, MeanFitness):
+    """
+    Display line plot of best and mean fitness values in each DE iteration.
+
+    Parameters
+    ----------
+        BestFitness : ndarray
+            array with best fitness values for each DE iteration.
+        MeanFitness : ndarray
+            array with mean fitness values for each DE iteration.
+    """
     sns.set_style("darkgrid")
     fig, ax = plt.subplots()
     ax.plot(BestFitness, label = 'Best fitness value')
@@ -56,6 +74,14 @@ def plot_fitness(BestFitness, MeanFitness):
 
 
 def plot_rankings(results):
+    """
+    Display scatter plot comparing real and predicted ranking.
+
+    Parameters
+    ----------
+        results : dataframe
+            Dataframe with columns containing real and predicted rankings.
+    """
     model_compare = []
     names = list(results.columns)
     model_compare = [[names[0], names[1]]]
@@ -64,8 +90,15 @@ def plot_rankings(results):
     plot_scatter(data = results, model_compare = model_compare)
 
 
-
 def plot_weights(weights):
+    """
+    Display scatter plot comparing real and predicted weights
+
+    Parameters
+    ----------
+        weights : dataframe
+            Dataframe with columns containing real and predicted weights.
+    """
     sns.set_style("darkgrid")
     step = 1
     list_rank = np.arange(1, len(weights) + 1, step)
